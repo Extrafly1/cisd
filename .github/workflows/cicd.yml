@@ -1,4 +1,4 @@
-name: cicd  
+name: cicd
 
 on:
   push:
@@ -43,10 +43,9 @@ jobs:
       - name: Run tests
         run: |
           docker run --rm \
-            --network host \
-            -e PYTHONPATH=/app \
-            myapp:test \  
-            pytest tests
+          --network host \
+          -e PYTHONPATH=/app \
+          myapp:test pytest tests
 
       - name: Build prod image
         run: docker build -t myapp:final .
@@ -60,9 +59,7 @@ jobs:
 
       - name: Deploy to remote server
         run: |
-          docker save myapp:final | \  
-            ssh -o StrictHostKeyChecking=no \
-                -p ${{ secrets.PORT }} \
-                ${{ secrets.USER }}@${{ secrets.HOST }} \
-            "podman load && \  # Загружаем образ в Podman.
-             podman tag myapp:final myapp:final && \
+          docker save myapp:final | ssh -o StrictHostKeyChecking=no \
+          -p ${{ secrets.PORT }} \
+          ${{ secrets.USER }}@${{ secrets.HOST }} \
+          "podman load && podman tag myapp:final myapp:final"
